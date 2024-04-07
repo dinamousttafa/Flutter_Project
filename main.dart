@@ -108,14 +108,89 @@ class LoginPage extends StatelessWidget {
 
 // Signup page
 class SignupPage extends StatelessWidget {
+  const SignupPage({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
+    final TextEditingController _usernameController = TextEditingController();
+    final TextEditingController _emailController = TextEditingController();
+    final TextEditingController _passwordController = TextEditingController();
+
+    String? validateEmail(String? value) {
+      if (value == null || value.isEmpty || !value.contains('@')) {
+        return 'Please enter a valid email';
+      }
+      return null;
+    }
+
+    String? validateUsername(String? value) {
+      if (value == null || value.isEmpty) {
+        return 'Please enter a username';
+      }
+      return null;
+    }
+
+    String? validatePassword(String? value) {
+      if (value == null || value.isEmpty) {
+        return 'Please enter a password';
+      }
+      return null;
+    }
+
+    void _submitForm() {
+      final String username = _usernameController.text;
+      final String email = _emailController.text;
+      final String password = _passwordController.text;
+
+      // Process the valid form data (e.g., submit to backend)
+      print('Username: $username');
+      print('Email: $email');
+      print('Password: $password');
+    }
+
+    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Signup Page'),
+        title: const Text('Sign Up'),
       ),
-      body: Center(
-        child: Text('This is the signup page'),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              TextFormField(
+                controller: _usernameController,
+                decoration: const InputDecoration(
+                  labelText: 'Username',
+                ),
+                validator: validateUsername,
+              ),
+              TextFormField(
+                controller: _emailController,
+                decoration: const InputDecoration(
+                  labelText: 'Email',
+                ),
+                validator: validateEmail,
+              ),
+              TextFormField(
+                controller: _passwordController,
+                decoration: const InputDecoration(
+                  labelText: 'Password',
+                ),
+                obscureText: true,
+                validator: validatePassword,
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _submitForm,
+                child: const Text('Sign Up'),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
