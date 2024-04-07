@@ -8,7 +8,6 @@ void main() {
 }
 
 class LoginPage extends StatelessWidget {
-  //basma
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -43,13 +42,12 @@ class LoginPage extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                //Navigate to  Reset password
                 ElevatedButton(
                   onPressed: () {
-                  Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => resetPage()),
-                );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ResetPage()),
+                    );
                   },
                   child: Text('Reset Password'),
                 ),
@@ -71,7 +69,6 @@ class LoginPage extends StatelessWidget {
               ],
             ),
             SizedBox(height: 20.0),
-
             TextButton(
               onPressed: () {
                 // Navigate to signup page
@@ -125,18 +122,109 @@ class SignupPage extends StatelessWidget {
   }
 }
 
+class ResetPage extends StatefulWidget {
+  @override
+  _ResetPageState createState() => _ResetPageState();
+}
 
-// reset page
-class resetPage extends StatelessWidget {
-  //nayera
+class _ResetPageState extends State<ResetPage> {
+  final TextEditingController _emailController = TextEditingController();
+
+  Future<void> _sendPasswordResetEmail(BuildContext context) async {
+    // This part was removed because it's Firebase specific
+    // Open the new page for password reset confirmation
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => PasswordResetConfirmation()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('reset Page'),
+      appBar: AppBar(title: Text('Forgot Password')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Enter your email address to receive a password reset email.'),
+            SizedBox(height: 16.0),
+            TextField(
+              controller: _emailController,
+              decoration: InputDecoration(labelText: 'Email'),
+            ),
+            SizedBox(height: 16.0),
+            ElevatedButton(
+              onPressed: () => _sendPasswordResetEmail(context),
+              child: Text('Reset Password'),
+            ),
+          ],
+        ),
       ),
-      body: Center(
-        child: Text('This is the reset page'),
+    );
+  }
+}
+
+class PasswordResetConfirmation extends StatelessWidget {
+  final TextEditingController _newPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Password Reset')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Enter your new password.'),
+            SizedBox(height: 16.0),
+            TextField(
+              controller: _newPasswordController,
+              obscureText: true,
+              decoration: InputDecoration(labelText: 'New Password'),
+            ),
+            SizedBox(height: 16.0),
+            TextField(
+              controller: _confirmPasswordController,
+              obscureText: true,
+              decoration: InputDecoration(labelText: 'Confirm Password'),
+            ),
+            SizedBox(height: 16.0),
+            ElevatedButton(
+              onPressed: () {
+                String newPassword = _newPasswordController.text.trim();
+                String confirmPassword = _confirmPasswordController.text.trim();
+                if (newPassword != confirmPassword) {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('Error'),
+                        content: Text('Passwords do not match.'),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text('OK'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                  return;
+                }
+                // Passwords match, proceed with resetting the password
+                // You can add your logic here
+              },
+              child: Text('Confirm'),
+            ),
+          ],
+        ),
       ),
     );
   }
