@@ -126,6 +126,8 @@ class SignupPage extends StatelessWidget {
     String? validateUsername(String? value) {
       if (value == null || value.isEmpty) {
         return 'Please enter a username';
+      } else if (value.length < 4) {
+        return 'Username must be at least 4 characters';
       }
       return null;
     }
@@ -133,6 +135,8 @@ class SignupPage extends StatelessWidget {
     String? validatePassword(String? value) {
       if (value == null || value.isEmpty) {
         return 'Please enter a password';
+      } else if (value.length < 6) {
+        return 'Password must be at least 6 characters';
       }
       return null;
     }
