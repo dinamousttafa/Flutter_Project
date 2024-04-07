@@ -108,7 +108,6 @@ class LoginPage extends StatelessWidget {
 
 // Signup page
 class SignupPage extends StatelessWidget {
-  //dina
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -129,14 +128,28 @@ class ResetPage extends StatefulWidget {
 
 class _ResetPageState extends State<ResetPage> {
   final TextEditingController _emailController = TextEditingController();
+  final _formKey = GlobalKey<FormState>(); // Add form key for form validation
 
+  // Validation function for email
+  String? validateEmail(String? value) {
+    if (value == null || value.isEmpty || !value.contains('@')) {
+      return 'Please enter a valid email';
+    }
+    return null;
+  }
+
+  // Function to send password reset email
   Future<void> _sendPasswordResetEmail(BuildContext context) async {
-    // This part was removed because it's Firebase specific
-    // Open the new page for password reset confirmation
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => PasswordResetConfirmation()),
-    );
+    if (_formKey.currentState!.validate()) {
+      // Proceed with sending reset email
+      // This part was removed because it's Firebase specific
+
+      // Open the new page for password reset confirmation
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => VerificationWidget()),
+      );
+    }
   }
 
   @override
@@ -145,22 +158,108 @@ class _ResetPageState extends State<ResetPage> {
       appBar: AppBar(title: Text('Forgot Password')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Enter your email address to receive a password reset email.'),
-            SizedBox(height: 16.0),
-            TextField(
-              controller: _emailController,
-              decoration: InputDecoration(labelText: 'Email'),
-            ),
-            SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: () => _sendPasswordResetEmail(context),
-              child: Text('Reset Password'),
-            ),
-          ],
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                  'Enter your email address to receive a password reset email.'),
+              SizedBox(height: 16.0),
+              TextFormField(
+                controller: _emailController,
+                decoration: InputDecoration(labelText: 'Email'),
+                validator: validateEmail, // Validate email
+              ),
+              SizedBox(height: 16.0),
+              ElevatedButton(
+                onPressed: () {
+                  _sendPasswordResetEmail(context);
+                },
+                child: Text('Reset Password'),
+              ),
+            ],
+          ),
         ),
+      ),
+    );
+  }
+}
+
+class VerificationWidget extends StatelessWidget {
+  const VerificationWidget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Verification'),
+      ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: "Code 1",
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: "Code 2",
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: "Code 3",
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: "Code 4",
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () {
+              // Navigate back to the login page after verification
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => PasswordResetConfirmation()),
+              );
+            },
+            child: Text("OK"),
+          ),
+        ],
       ),
     );
   }
@@ -220,6 +319,9 @@ class PasswordResetConfirmation extends StatelessWidget {
                 }
                 // Passwords match, proceed with resetting the password
                 // You can add your logic here
+
+                // After resetting the password, navigate back to the home page
+                Navigator.popUntil(context, ModalRoute.withName('/'));
               },
               child: Text('Confirm'),
             ),
@@ -229,3 +331,4 @@ class PasswordResetConfirmation extends StatelessWidget {
     );
   }
 }
+
